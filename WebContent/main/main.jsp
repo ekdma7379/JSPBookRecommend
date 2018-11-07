@@ -47,8 +47,10 @@
 		initNaver();
 		initDaum();
 		bookfind();
-		bookcomment();
+		bookSendComment();
+		bookAllComment();
 		booklike();
+		
 	});
 	/* $.post("http://localhost:8080/BookRecommend/main/main.jsp") */
 	function initDaum() {
@@ -94,7 +96,21 @@
 				});
 		});
 	}
-	function bookcomment(){
+	function bookAllComment(){
+		var bookno=$('#bookNo').val();
+		var commentData={"bookno":bookno};
+		$.ajax({
+			type:'POST',
+			url:'comment_all.jsp',
+			data:commentData,
+			success:function(response)
+			{
+				$('#printComment').html(response);
+			}
+		});
+	};
+	
+	function bookSendComment(){
 		$('#send').click(function(){
 			if($('idCheck')==null)
 			{
@@ -120,24 +136,20 @@
 				{
 					$('#printComment').html(response);
 				}
-				
 			});
 		});
-		$('#like-holder').click(function(){
-			/* alert("눌림"); */
+		/* $('#like-holder').click(function(){
+			// alert("눌림"); 
 			var bookno=$('#bookNo').val();
 			var likeData={"bookno":bookno};
 			$.ajax({
 				type:'POST',
 				url:'bookLike_ok.jsp',
 				data:likeData,
-				/* success:function(response)
-				{
-					$('#printComment').html(response);
-				} */
+				
 				
 			});
-		});
+		});  */
 	}
 	function booklike(){
 		$('#like-holder').click(function(){
@@ -147,12 +159,7 @@
 			$.ajax({
 				type:'POST',
 				url:'bookLike_ok.jsp',
-				data:likeData,
-				success:function(response)
-				{
-					$('#printComment').html(response);
-				}
-				
+				data:likeData
 			});
 		});
 	}

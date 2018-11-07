@@ -41,9 +41,8 @@
 <body>
 	<div class="container">
 		<div class="form-group">
-			<form>
-				<input type="hidden" name="jsp" value="bookfind.jsp"> <label
-					for="exampleFormControlSelect1">타입</label> <select
+				<input type="hidden" name="jsp" value="bookfind.jsp"> 
+				<label for="exampleFormControlSelect1">타입</label> <select
 					class="form-control" id="type" name="type">
 					<option value="title">도서이름</option>
 					<option value="author">저자</option>
@@ -53,7 +52,6 @@
 			<input name="bookName" id="searchInput" placeholder="도서 검색"
 				type="text"> <input type="button" id="searchBtn" class="btn btn-sm btn-primary" value="검색">
 		</div>
-		</form>
 		<div id="print">
 		</div>
 		<br> <br>

@@ -4,7 +4,7 @@
 <%
 	request.setCharacterEncoding("EUC-KR");
 	String id=(String)session.getAttribute("id");
-	String bookno = request.getParameter("bookno");
+	String bookno = request.getParameter("bookno");    
 %>
 <jsp:useBean id="dao" class="com.sist.dao.BookDAO"></jsp:useBean>
 <%

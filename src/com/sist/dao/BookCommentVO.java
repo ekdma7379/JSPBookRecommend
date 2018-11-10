@@ -6,7 +6,16 @@ public class BookCommentVO {
 	private int book_no;
 	private String content;
 	private Date regdate;
+	private double possitive;
 	
+	
+	
+	public double getPossitive() {
+		return possitive;
+	}
+	public void setPossitive(double possitive) {
+		this.possitive = possitive;
+	}
 	public String getMem_name() {
 		return mem_name;
 	}

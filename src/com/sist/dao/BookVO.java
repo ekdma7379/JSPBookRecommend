@@ -1,7 +1,7 @@
 package com.sist.dao;
 import java.util.*;
 
-public class BookVO {
+public class BookVO implements Comparable<BookVO>{
 	private int no;
 	private String description;
 	private String title;
@@ -9,7 +9,7 @@ public class BookVO {
 	private String publisher;
 	private Date pubdate;
 	private String image;
-	private int commentpoint;
+	private double commentpoint;
 	private int price;
 	
 	public int getPrice() {
@@ -60,12 +60,18 @@ public class BookVO {
 	public void setImage(String image) {
 		this.image = image;
 	}
-	public int getCommentpoint() {
+	public double getCommentpoint() {
 		return commentpoint;
 	}
-	public void setCommentpoint(int commentpoint) {
+	public void setCommentpoint(double commentpoint) {
 		this.commentpoint = commentpoint;
 	}
+	@Override
+	public int compareTo(BookVO o) {
+		// TODO Auto-generated method stub
+		return (commentpoint < o.commentpoint) ? 1 : ((commentpoint == o.commentpoint) ? 0 : -1);
+	}
+	
 	
 	
 }

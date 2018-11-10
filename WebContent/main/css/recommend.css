@@ -1,0 +1,80 @@
+@CHARSET "EUC-KR";
+.ed {
+  opacity: 0;
+}
+
+.ed.show {
+  opacity: 1;
+}
+
+.wrapper {
+  margin: 125px auto;
+  width: 200px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  display: block;
+}
+
+.ion-ios-heart {
+  color: #1a1a1a;
+  display: inline-block;
+  font-size: 17px;
+}
+
+.ion-ios-heart.hover {
+  color: #2a2e2e;
+}
+
+.ion-ios-heart.red {
+  color: #f05f70;
+  transition: all .2s ease-in-out;
+}
+
+.recommend {
+  display: inline-block;
+  color: #1a1a1a;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.counter {
+  background: #fff;
+  color: #494e58;
+  border-radius: 2px;
+  font-size: 13px;
+  padding: 2px 5px;
+  opacity: 0;
+  position: relative;
+  top: -1px;
+  z-index: 19;
+}
+
+.counter.show {
+  display: inline-block;
+  opacity: 1;
+}
+
+.boo {
+  width: 70px;
+  height: 70px;
+  border-radius: 100%;
+  background: #f05f70;
+  position: absolute;
+  left: 50%;
+  top: -26px;
+  margin-left: 38px;
+  transform: scale(0, 0);
+  z-index: 9;
+}
+
+.big {
+  animation: big 0.4s ease-in-out;
+}
+
+@keyframes big {
+  50% {
+    transform: scale(1, 1);
+    opacity: 0.2;
+  }
+}

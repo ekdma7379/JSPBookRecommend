@@ -35,8 +35,10 @@
 <!-- Custom styles for this template -->
 <link href="css/shop-homepage.css" rel="stylesheet">
 <link href="css/comment.css" rel="stylesheet">
-<link rel="stylesheet"
-	href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="css/recommend.css" rel="stylesheet">
+<script src="js/recommend.js"></script>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript">
@@ -50,7 +52,7 @@
 		bookSendComment();
 		bookAllComment();
 		booklike();
-		
+		recommend();
 	});
 	/* $.post("http://localhost:8080/BookRecommend/main/main.jsp") */
 	function initDaum() {
@@ -128,6 +130,7 @@
 			var bookno=$('#bookNo').val();
 			var commentTotal=$('#commentTotal').val();
 			var commentData={"comment":comment,"bookno":bookno,"commenttotal":commentTotal};
+			$('#comment').empty();
 			$.ajax({
 				type:'POST',
 				url:'comment_ok.jsp',

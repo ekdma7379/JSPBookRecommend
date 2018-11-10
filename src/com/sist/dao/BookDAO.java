@@ -1,11 +1,15 @@
 package com.sist.dao;
 
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.Rserve.RConnection;
 import java.util.*;
 import java.util.Date;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+
+import com.sist.manager.NaverDaumManager;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -26,6 +30,8 @@ public class BookDAO {
 	private final String USER = "scott";
 	private final String PWD = "tigertiger";
 	//////////////////// XML로 코딩/////////////////////////////////////////
+	
+	NaverDaumManager ndm = new NaverDaumManager();
 
 	// 드라이버 등록 Class.forName()
 	public BookDAO() {
@@ -147,7 +153,6 @@ public class BookDAO {
 					  ps.setDate(6, pubdate);
 					  ps.setString(7, image);
 					  
-					  
 					  ps.executeUpdate();
 					  
 					  System.out.println(i+"번째 날짜:"+pubdate.toString());
@@ -233,7 +238,7 @@ public class BookDAO {
 			vo.setPublisher(rs.getString(6));
 			vo.setPubdate(rs.getDate(7));
 			vo.setImage(rs.getString(8));
-			vo.setCommentpoint(rs.getInt(9));
+			vo.setCommentpoint(rs.getDouble(9));
 			rs.close();
 			
 		}catch (Exception e) {
@@ -245,6 +250,36 @@ public class BookDAO {
 		
 		return vo;
 	}
+	public void rGraph()
+	   {
+		   try
+		   {
+			   RConnection rc=new RConnection();
+			   rc.setStringEncoding("utf8");
+			   rc.voidEval("library(KoNLP)");
+			   rc.voidEval("data<-readLines(\"c:/data/news.txt\")");
+			   rc.voidEval("png(\"C:/webDev/webStudy2/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/RandJavaProject/main/news.png\")");
+			   rc.voidEval("data2<-sapply(data,extractNoun,USE.NAMES = F)");
+			   rc.voidEval("data3<-unlist(data2)");
+			   REXP p=rc.eval("data3");
+			   String[] s=p.asStrings();
+			   for(String ss:s)
+			   {
+				   System.out.println(ss);
+			   }
+			   /* rc.voidEval("data3<-unlist(data2)");
+			   rc.voidEval("data4<-table(data3)");
+			   rc.voidEval("library(wordcloud)");
+			   // col=c("","")
+			   rc.voidEval("pie(data4)");
+			   //rc.voidEval("wordcloud(names(data4), freq=data4, scale=c(5,1), rot.per=0.25, min.freq=1, random.order=F, random.color=T, colors=rainbow(15))");
+			   rc.voidEval("dev.off()");*/
+			   rc.close();
+		   }catch(Exception ex)
+		   {
+			   System.out.println(ex.getMessage());
+		   }
+	   }
 	/*
 public ArrayList<BoardVO> boardFindData(String fs,String ss)
 	  {
@@ -330,7 +365,7 @@ public ArrayList<BoardVO> boardFindData(String fs,String ss)
 	   }
 	
 	public String BookCommentInsert(BookCommentVO vo)
-	{
+	{ 
 		String result="";
 		try {
 			getConnection();
@@ -345,30 +380,102 @@ public ArrayList<BoardVO> boardFindData(String fs,String ss)
 			System.out.println("댓글유무 :"+rs.getInt(1));
 			if(rs.getInt(1)>0)
 			{
-				result= "이미 댓글을 달았습니다.";
+				System.out.println("X");
+				result= "X";
+				return result;
 			}
 			else
 			{
-				sql="INSERT INTO bookComment(mem_no,book_no,content,name) "
-						+ "VALUES(?,?,?,?)";
+				ArrayList<String> pos_word;
+				String content = vo.getContent();
+				content=content.replaceAll(" ", "|");
+				content=content.replaceAll("\\?", "|");
+				content=content.replaceAll("\\!", "|");
+				content=content.replaceAll("\\.", "|");
+				content=content.replaceAll(",", "|");
+				System.out.println(content);
+				String[] splitcontent = content.split("\\|");
+				ArrayList<String> resultlist = new ArrayList<String>(); 
+				ArrayList<String> poslist = new ArrayList<String>();
+				poslist.add("행복");
+				poslist.add("소망");
+				poslist.add("즐거");
+				poslist.add("기쁨");
+				poslist.add("기쁜");
+				poslist.add("좋");
+				poslist.add("즐거");
+				poslist.add("추억");
+				ArrayList<String> dislist = new ArrayList<String>();
+				dislist.add("불행");
+				dislist.add("싫");
+				dislist.add("꺼저");
+				dislist.add("나쁘");
+				dislist.add("나쁜");
+				dislist.add("슬퍼");
+				dislist.add("슬픈");
+				for(int i=0;i<splitcontent.length;i++)
+				{
+					//System.out.println(splitcontent[i]);
+					if(!splitcontent[i].equals(""))
+					{
+						System.out.println("나눠진 리스트에 추가됨"+splitcontent[i]);
+						resultlist.add(splitcontent[i]);
+					}
+				}
+				int poscount = 0;
+				int discount = 0;
+				System.out.println(vo.getContent());
+				for (String key : poslist) 
+				{
+					
+					if (vo.getContent().contains(key)) 
+					{
+						System.out.println(key+" :긍겅단어 카운트 됨");
+						poscount+=1;
+					}
+				}
+				for (String key : dislist)
+				{
+					//System.out.println("키값:" + key);
+					if (vo.getContent().contains(key)) 
+					{
+						System.out.println(key+" :부정단어 카운트 됨");
+						discount+=1;
+					}
+				}
+				double posresult = (double)(discount)/splitcontent.length;
+				System.out.println("점수 :"+(double)(poscount)/splitcontent.length+" "+(double)(discount)/splitcontent.length);
+				/*System.out.println("긍정점수 : 0.318189"+" 부정점수 : 0.045455");*/
+				double resultpoint = (poscount >= discount ? 0.1 : -0.1);
+				System.out.println("결과 점수 :"+resultpoint);
+				sql = "UPDATE bookinfo SET commentpoint= commentpoint+? WHERE no=?";
+				ps = conn.prepareStatement(sql);
+				ps.setDouble(1,resultpoint);
+				ps.setInt(2, vo.getBook_no());
+				ps.executeUpdate();
+				
+				sql="INSERT INTO bookComment(mem_no,book_no,content,name,possitive) "
+						+ "VALUES(?,?,?,?,?)";
 				ps=conn.prepareStatement(sql);
 				ps.setString(1, vo.getMem_no());
 				ps.setInt(2, vo.getBook_no());
 				ps.setString(3, vo.getContent());
 				ps.setString(4, vo.getMem_name());
+				ps.setDouble(5, resultpoint);
 				ps.executeUpdate();
-				result="댓글완료!";
 			}
 			rs.close();
+			
+			
 		} catch (Exception e) {
 			// TODO: handle exception
-			System.out.println("BookInsertComment:"+e.getMessage());
+			System.out.println("BookCommentInsert:"+e.getMessage());
 		}finally {
 			disConnection();
 		}
 		return result;
 	}
-	
+
 	
 	
 	
@@ -411,9 +518,6 @@ public ArrayList<BoardVO> boardFindData(String fs,String ss)
 	}
 	
 	
-	
-	
-	
 	public ArrayList<BookCommentVO> BookCommentAllData(int no)
 	{
 		ArrayList<BookCommentVO> list = new ArrayList<BookCommentVO>();
@@ -435,17 +539,18 @@ public ArrayList<BoardVO> boardFindData(String fs,String ss)
 				vo.setMem_name(rs.getString(2));
 				vo.setBook_no(rs.getInt(3));
 				vo.setContent(rs.getString(4));
-				vo.setRegdate(rs.getDate(5));
+				vo.setPossitive(rs.getDouble(5));
+				vo.setRegdate(rs.getDate(6));
 				list.add(vo);
 			}
 			rs.close();
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("BookCommentAllData:"+e.getMessage());
-		}finally {
+		}finally 
+		{
 			disConnection();
 		}
-		
 		return list;
 	}
 	public int BookCommentTotal(int no)
@@ -475,6 +580,48 @@ public ArrayList<BoardVO> boardFindData(String fs,String ss)
 		
 		return total;
 	}
+	
+	public BookVO bookKeywordPointAdd(ArrayList<String> list,int no)
+	{
+		BookVO vo = new BookVO();
+		
+		try {
+			getConnection();
+			
+			String sql="SELECT * FROM bookInfo WHERE no=?";
+			
+			ps=conn.prepareStatement(sql);
+			ps.setInt(1, no);
+			
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+			
+			vo.setNo(rs.getInt(1));
+			vo.setDescription(rs.getString(2));
+			vo.setPrice(rs.getInt(3));
+			vo.setTitle(rs.getString(4));
+			vo.setAuthor(rs.getString(5));
+			vo.setPublisher(rs.getString(6));
+			vo.setPubdate(rs.getDate(7));
+			vo.setImage(rs.getString(8));
+			vo.setCommentpoint(rs.getDouble(9));
+			rs.close();
+			
+			for(String keyword : list)
+			{
+				
+			}
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("bookKeywordPointAdd:"+e.getMessage());
+		}finally {
+			disConnection();
+		}
+		
+		return vo;
+	}
 	/*public ArrayList<BookVO> BookinfoAllData()
 	{
 		ArrayList<BookVO> list = new ArrayList<BookVO>();
@@ -499,7 +646,12 @@ public ArrayList<BoardVO> boardFindData(String fs,String ss)
 	
 	/*public static void main(String[] args) {
 		BookDAO dao = new BookDAO();
-		dao.insertBookAllData();
+		BookCommentVO vo = new BookCommentVO();
+		vo.setBook_no('3');
+		vo.setContent("하하하하");
+		vo.setMem_name("1");
+		vo.setMem_no("10");
+		dao.BookCommentInsert(vo);
 	}*/
 
 }

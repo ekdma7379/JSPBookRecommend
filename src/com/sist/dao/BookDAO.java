@@ -72,7 +72,7 @@ public class BookDAO {
 			JSONObject obj;
 
 			// naverAPI에서 책 검색목록 JSON 가져오기
-			String text = URLEncoder.encode("나", "UTF-8");
+			String text = URLEncoder.encode("", "UTF-8");
 
 			String apiURL = "https://openapi.naver.com/v1/search/book.json?query=" + text + "&display=100"; // json
 																											// 결과
@@ -136,30 +136,42 @@ public class BookDAO {
 						IMAGE           VARCHAR2(1000) 
 						COMMENTPOINT    NUMBER 
 					 */
-					System.out.println("title:"+title);
-					System.out.println("image:"+image);
-					System.out.println("author:"+author);
-					System.out.println("price:"+price);
-					System.out.println("publisher:"+publisher);
-					System.out.println("pubdate:"+pubdate);
-					System.out.println("description:"+description);
-					
-					  String sql ="Insert INTO bookinfo VALUES(bi_no_seq.nextval,?,?,?,?,?,?,?,0)";
-					  
-					  ps = conn.prepareStatement(sql);
-					  ps.setString(1, description);
-					  ps.setInt(2, price);
-					  ps.setString(3,title);
-					  ps.setString(4, author);
-					  ps.setString(5, publisher);
-					  ps.setDate(6, pubdate);
-					  ps.setString(7, image);
-					  
-					  ps.executeUpdate();
-					  
-					  System.out.println(i+"번째 날짜:"+pubdate.toString());
+					/*System.out.println("title:" + title);
+					System.out.println("image:" + image);
+					System.out.println("author:" + author);
+					System.out.println("price:" + price);
+					System.out.println("publisher:" + publisher);
+					System.out.println("pubdate:" + pubdate);
+					System.out.println("description:" + description);*/
+					String sql = "SELECT COUNT(*) FROM bookinfo WHERE title=?";
+					ps = conn.prepareStatement(sql);
+					ps.setString(1, title);
+					ResultSet rs = ps.executeQuery();
+					rs.next();
+					if (rs.getInt(1) > 0) 
+					{
+						System.out.println("타이틀:"+title+" 지나감");
+						continue;
+					}
+					else 
+					{
+						sql = "Insert INTO bookinfo VALUES(bi_no_seq.nextval,?,?,?,?,?,?,?,0)";
+
+						ps = conn.prepareStatement(sql);
+						ps.setString(1, description);
+						ps.setInt(2, price);
+						ps.setString(3, title);
+						ps.setString(4, author);
+						ps.setString(5, publisher);
+						ps.setDate(6, pubdate);
+						ps.setString(7, image);
+
+						ps.executeUpdate();
+
+						System.out.println(i + "번째 날짜:" + pubdate.toString());
+					}
 				}
-				
+
 			} catch (Exception e) {
 				// TODO: handle exception
 				System.out.println("result:" + e.getMessage());
@@ -252,7 +264,6 @@ public class BookDAO {
 		
 		return vo;
 	}
-	
 	public void CommentrGraph(int no)
 	   {
 		   try
@@ -282,14 +293,14 @@ public class BookDAO {
 
 				BufferedWriter out = new BufferedWriter(new FileWriter("C://data//news.txt"));
 
-				for(int i=1;i<poscnt;i++)
+				for(int i=0;i<poscnt;i++)
 				{
-					out.write("긍정.");
+					out.write("긍정. ");
 				}
 				
-				for(int i=1;i<discnt;i++)
+				for(int i=0;i<discnt;i++)
 				{
-					out.write("부정.");
+					out.write("부정. ");
 				}
 							
 
@@ -306,16 +317,22 @@ public class BookDAO {
 			   RConnection rc=new RConnection();
 			   rc.setStringEncoding("utf8");
 			   rc.voidEval("library(KoNLP)");
-			   rc.voidEval("data<-readLines(\"c:/data/news.txt\")");
-			   System.out.println("읽어옴");
+			   rc.voidEval("data1<-readLines(\"c:/data/news.txt\",encoding = 'utf-8')");
+			   System.out.println("1");
 			   rc.voidEval("png(\"C:/webDev/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/BookRecommend/main/news.png\")");
-			   rc.voidEval("data2<-sapply(data,extractNoun,USE.NAMES = F)");			  
-			   rc.voidEval("data3<-unlist(data2)");
+			   System.out.println("2");
+			   rc.voidEval("words <- sapply(data1, extractNoun,USE.NAMES = F)");
+			   System.out.println("3");
+			   rc.voidEval("data3<-unlist(words)");
+			   System.out.println("4");
 			   rc.voidEval("data4<-table(data3)");
+			   System.out.println("5");
 			   // col=c("","")
-			   rc.voidEval("pie(data4,col = c(\"CYAN\",\"PINK\"))");
+			   rc.voidEval("pie(data4,col = c(\"CYAN\",\"PINK\"),labels=c(\"긍정\",\"부정\"))");
+			   System.out.println("6");
 			   //rc.voidEval("wordcloud(names(data4), freq=data4, scale=c(5,1), rot.per=0.25, min.freq=1, random.order=F, random.color=T, colors=rainbow(15))");
 			   rc.voidEval("dev.off()");
+			   System.out.println("7");
 			   rc.close();
 		   }catch(Exception ex)
 		   {
@@ -687,7 +704,7 @@ public ArrayList<BoardVO> boardFindData(String fs,String ss)
 		return list;
 	}*/
 	
-	
+	// 댓글 삽입 연습
 	/*public static void main(String[] args) {
 		BookDAO dao = new BookDAO();
 		BookCommentVO vo = new BookCommentVO();
@@ -697,5 +714,10 @@ public ArrayList<BoardVO> boardFindData(String fs,String ss)
 		vo.setMem_no("10");
 		dao.BookCommentInsert(vo);
 	}*/
+	// 책 크롤링 디비에 넣기
+	public static void main(String[] args) {
+		BookDAO dao = new BookDAO();
+		dao.insertBookAllData();
+	}
 
 }

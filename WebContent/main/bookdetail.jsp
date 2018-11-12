@@ -28,7 +28,7 @@
 		<h3>
 			&lt;<%=vo.getTitle()%>&gt; 상세보기
 		</h3>
-		<%=application.getRealPath("/") %>
+		<%-- <%=application.getRealPath("/") %> --%>
 		<table class="table">
 			<tr>
 				<td><a href="main.jsp?no=0" class="btn btn-sm btn-warning">목록</a>

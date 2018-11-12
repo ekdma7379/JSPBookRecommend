@@ -5,7 +5,6 @@
 	String id = (String)session.getAttribute("id");
 	BookMemberDAO bmdao = new BookMemberDAO();
 	ArrayList<BookVO> list =bmdao.BookRecommendData(id, 3);
-	
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -16,8 +15,13 @@
 <body>
 	<div class="row">
 		<%
+			int i=0;
 				for(BookVO vo:list)
 				{
+					if(i>3)
+					{
+						break;
+					}
 			%>
 		<div class="col-sm-3">
 			<div class="panel panel-primary">
@@ -31,6 +35,7 @@
 			</div>
 		</div>
 		<%
+			i++;
 				}
 			%>
 	</div>

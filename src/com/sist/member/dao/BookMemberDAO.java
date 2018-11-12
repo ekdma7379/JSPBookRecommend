@@ -190,6 +190,42 @@ public class BookMemberDAO {
 		System.out.println(result);
 		return result;
 	}
+	
+	public BookMemberVO memberDetailData(String id)
+	{
+		BookMemberVO vo = new BookMemberVO();
+		
+		try {
+			getConnection();
+			
+			String sql = "SELECT * FROM bookmember WHERE email = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, id);
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+			
+			vo.setNo(rs.getInt(1));
+			vo.setEmail(rs.getString(2));
+			vo.setPwd(rs.getString(3));
+			vo.setName(rs.getString(4));
+			vo.setAge(rs.getInt(5));
+			vo.setSex(rs.getString(6));
+			vo.setPossitive(rs.getString(7));
+			vo.setLive(rs.getString(8));
+			
+			rs.close();
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("memberDetailData:"+e.getMessage());
+		}finally {
+			disConnection();
+		}
+		
+		return vo;
+	}
+	
 	public ArrayList<BookVO> BookRecommendData(String id, int topN)
 	{
 		ArrayList<BookVO> booklist = new ArrayList<BookVO>();

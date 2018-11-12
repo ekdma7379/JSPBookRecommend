@@ -36,6 +36,7 @@
 <link href="css/shop-homepage.css" rel="stylesheet">
 <link href="css/comment.css" rel="stylesheet">
 <link href="css/recommend.css" rel="stylesheet">
+<link href="css/mypage.css" rel="stylesheet">
 <script src="js/recommend.js"></script>
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">

@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
 	pageEncoding="EUC-KR" import="java.util.*,com.sist.member.dao.*"%>
 <%
-	request.setCharacterEncoding("EUC-KR");
+	request.setCharacterEncoding("UTF-8");
 	String id=(String)session.getAttribute("id");
 	String bookno = request.getParameter("bookno");    
 %>
@@ -10,6 +10,11 @@
 <%
 	BookVO vo = dao.BookDetailData(Integer.parseInt(bookno));
 	int total = dao.BookCommentTotal(vo.getNo());
+	if(total>0)
+	{
+		dao.CommentrGraph(Integer.parseInt(bookno));
+	}
+	/* String img=" "; */
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -18,10 +23,12 @@
 <title>Insert title here</title>
 </head>
 <body>
+
 	<div class="container">
 		<h3>
 			&lt;<%=vo.getTitle()%>&gt; 상세보기
 		</h3>
+		<%=application.getRealPath("/") %>
 		<table class="table">
 			<tr>
 				<td><a href="main.jsp?no=0" class="btn btn-sm btn-warning">목록</a>
@@ -68,9 +75,24 @@
 					<td width=15% class="text-right">댓글점수</td>
 					<td width=45%><%=vo.getCommentpoint()%></td>
 				</tr>
+				<%
+					if(total>0) 
+					{
+				%>
+				<tr>
+					<td width=40%><img src="news.png" width=100%></td>
+					<th colspan="2" class="text-left"><%=vo.getDescription()%></th>
+				</tr>
+				<%
+					}else
+					{
+				%>
 				<tr>
 					<th colspan="3" class="text-left"><%=vo.getDescription()%></th>
 				</tr>
+				<%
+					}
+				%>
 					<%
 						if(id!=null)
 						{

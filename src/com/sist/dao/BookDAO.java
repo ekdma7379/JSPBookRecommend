@@ -12,6 +12,8 @@ import org.json.simple.parser.JSONParser;
 import com.sist.manager.NaverDaumManager;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -250,35 +252,77 @@ public class BookDAO {
 		
 		return vo;
 	}
-	public void rGraph()
+	
+	public void CommentrGraph(int no)
 	   {
 		   try
 		   {
+			   getConnection();
+			   
+			   String sql = "SELECT COUNT(*) FROM bookcomment WHERE book_no=? AND possitive>0";
+			   ps = conn.prepareStatement(sql);
+			   ps.setInt(1, no);
+			   
+			   ResultSet rs = ps.executeQuery();
+			   rs.next();
+			   int poscnt = rs.getInt(1);
+			   rs.close();
+			   
+			   sql = "SELECT COUNT(*) FROM bookcomment WHERE book_no=? AND possitive<0";
+			   ps = conn.prepareStatement(sql);
+			   ps.setInt(1, no);
+			   
+			   rs = ps.executeQuery();
+			   rs.next();
+			   int discnt = rs.getInt(1);
+
+			try {
+
+				////////////////////////////////////////////////////////////////
+
+				BufferedWriter out = new BufferedWriter(new FileWriter("C://data//news.txt"));
+
+				for(int i=1;i<poscnt;i++)
+				{
+					out.write("긍정.");
+				}
+				
+				for(int i=1;i<discnt;i++)
+				{
+					out.write("부정.");
+				}
+							
+
+				out.close();
+
+				////////////////////////////////////////////////////////////////
+
+			} catch (Exception e) {
+
+				System.err.println(e); // 에러가 있다면 메시지 출력
+			}
+
+
 			   RConnection rc=new RConnection();
 			   rc.setStringEncoding("utf8");
 			   rc.voidEval("library(KoNLP)");
 			   rc.voidEval("data<-readLines(\"c:/data/news.txt\")");
-			   rc.voidEval("png(\"C:/webDev/webStudy2/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/RandJavaProject/main/news.png\")");
-			   rc.voidEval("data2<-sapply(data,extractNoun,USE.NAMES = F)");
+			   System.out.println("읽어옴");
+			   rc.voidEval("png(\"C:/webDev/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/BookRecommend/main/news.png\")");
+			   rc.voidEval("data2<-sapply(data,extractNoun,USE.NAMES = F)");			  
 			   rc.voidEval("data3<-unlist(data2)");
-			   REXP p=rc.eval("data3");
-			   String[] s=p.asStrings();
-			   for(String ss:s)
-			   {
-				   System.out.println(ss);
-			   }
-			   /* rc.voidEval("data3<-unlist(data2)");
 			   rc.voidEval("data4<-table(data3)");
-			   rc.voidEval("library(wordcloud)");
 			   // col=c("","")
-			   rc.voidEval("pie(data4)");
+			   rc.voidEval("pie(data4,col = c(\"CYAN\",\"PINK\"))");
 			   //rc.voidEval("wordcloud(names(data4), freq=data4, scale=c(5,1), rot.per=0.25, min.freq=1, random.order=F, random.color=T, colors=rainbow(15))");
-			   rc.voidEval("dev.off()");*/
+			   rc.voidEval("dev.off()");
 			   rc.close();
 		   }catch(Exception ex)
 		   {
-			   System.out.println(ex.getMessage());
-		   }
+			   System.out.println("CommentrGraph:"+ex.getMessage());
+		   }finally {
+			disConnection();
+		}
 	   }
 	/*
 public ArrayList<BoardVO> boardFindData(String fs,String ss)

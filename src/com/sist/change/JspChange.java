@@ -7,7 +7,9 @@ public class JspChange {
 		"bookfind.jsp",
 		"recommend.jsp",
 		"mypage.jsp",
-		"bookdetail.jsp"
+		"bookdetail.jsp",
+		"update.jsp"
+		
 	};
 	
 	public static String change(int no)

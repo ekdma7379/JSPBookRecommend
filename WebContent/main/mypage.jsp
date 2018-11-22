@@ -61,6 +61,14 @@
 		<br>
 		<br>
 		<hr size="1px" color="#CCCCCC" />
+		<table>
+			<form action="main.jsp?no=6" method="post">
+			<tr colspan="2" class="text-right">
+				<td><a href="main.jsp?no=6"><input type="submit" value="¼öÁ¤" class="btn btn-xm btn-primary"></a></td>
+			</tr>
+			</form>
+		</table>
+		<br>
 	</div>
 
 </body>

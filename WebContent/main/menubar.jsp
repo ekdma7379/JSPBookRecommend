@@ -8,7 +8,36 @@
 </head>
 <body>
  <div class="container">
- <a class="navbar-brand" href="#">Book Recommend</a>
+ <%
+ String id=(String)session.getAttribute("id");
+	if(id==null)
+	{
+		%>
+		<a class="navbar-brand" href="#">Book Recommend</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="main.jsp?no=1&dno=notdivide">회원가입
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="main.jsp?no=0&dno=divide">홈</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="main.jsp?no=2&dno=divide">책 찾기</a>
+            </li>
+          </ul>
+        </div>
+        <%
+	}
+	else
+	{
+	%>
+ 	<a class="navbar-brand" href="#">Book Recommend</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -33,6 +62,9 @@
             </li>
           </ul>
         </div>
+    <%
+	}
+	%>
   </div>
 </body>
 </html>

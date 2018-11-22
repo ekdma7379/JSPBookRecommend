@@ -103,6 +103,47 @@ public class BookMemberDAO {
 	 * for(LocationVO vo : list) {
 	 * System.out.println(vo.getNo()+":"+vo.getName()); } }
 	 */
+	public void deleteBookMember(String id)
+	{
+		try {
+			getConnection();
+			String sql = "DELETE FROM bookMember WHERE email=?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, id);
+			ps.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("deleteBookMember:"+e.getMessage());
+		}finally {
+			disConnection();
+		}
+	}
+	
+	public void updateBookMember(BookMemberVO vo) {
+		try {
+
+			getConnection();
+			String sql = "UPDATE bookMember SET email=?,password=?,name=?,age=?,sex=?,possitive=?,live=? WHERE no=?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, vo.getEmail());
+			ps.setString(2, vo.getPwd());
+			ps.setString(3, vo.getName());
+			ps.setInt(4, vo.getAge());
+			ps.setString(5, vo.getSex());
+			ps.setString(6, vo.getPossitive());
+			ps.setString(7, vo.getLive());
+			ps.setInt(8, vo.getNo());
+			ps.executeUpdate();
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("insertBookMember:" + e.getMessage());
+		} finally {
+			disConnection();
+		}
+	}
+	
+	
 	public void insertBookMember(BookMemberVO vo) {
 		try {
 
@@ -281,27 +322,42 @@ public class BookMemberDAO {
 					continue;
 				}
 				
-				simular+=(memVO.getAge()==rs.getInt(1)?0.25:0);
-				simular+=(memVO.getSex().equals(rs.getString(2))?0.25:0);
-				simular+=(memVO.getPossitive().equals(rs.getString(3))?0.25:0);
-				simular+=(memVO.getLive().equals(rs.getString(4))?0.25:0);
+				simular+=(memVO.getAge()==rs.getInt(1)?0.10:0);
+				simular+=(memVO.getSex().equals(rs.getString(2))?0.30:0);
+				simular+=(memVO.getPossitive().equals(rs.getString(3))?0.40:0);
+				simular+=(memVO.getLive().equals(rs.getString(4))?0.20:0);
 				
 				vo.setMemEmail(rs.getString(5));
 				vo.setResult(simular);
 				dbMemberList.add(vo);
 			}
-			Collections.sort(dbMemberList);
-			/////첫번째///////
-			System.out.println("=============첫번째 출력==================");
-			System.out.println(dbMemberList.get(0).getMemEmail()+":"+dbMemberList.get(0).getResult());
-			System.out.println(dbMemberList.get(1).getMemEmail()+":"+dbMemberList.get(1).getResult());
-			System.out.println("=============첫번째 출력==================");
-			//System.out.println(dbMemberList.get(2).getMemno()+":"+dbMemberList.get(2).getResult());
 			
+			/////첫번째///////
+			System.out.println("=============첫번째 정렬 전==================");
+			/*System.out.println(dbMemberList.get(0).getMemEmail()+":"+dbMemberList.get(0).getResult());
+			System.out.println(dbMemberList.get(1).getMemEmail()+":"+dbMemberList.get(1).getResult());
+			System.out.println(dbMemberList.get(2).getMemEmail()+":"+dbMemberList.get(2).getResult());
+			System.out.println(dbMemberList.get(3).getMemEmail()+":"+dbMemberList.get(3).getResult());*/
+			for(int z=0;z<dbMemberList.size();z++){
+				System.out.println(dbMemberList.get(z).getMemEmail()+":"+dbMemberList.get(z).getResult());
+			}
+			Collections.sort(dbMemberList);
+			
+			System.out.println("=============첫번째 정렬 후==================");
+			/*System.out.println(dbMemberList.get(0).getMemEmail()+":"+dbMemberList.get(0).getResult());
+			System.out.println(dbMemberList.get(1).getMemEmail()+":"+dbMemberList.get(1).getResult());
+			System.out.println(dbMemberList.get(2).getMemEmail()+":"+dbMemberList.get(2).getResult());
+			System.out.println(dbMemberList.get(3).getMemEmail()+":"+dbMemberList.get(3).getResult());
+			System.out.println(dbMemberList.get(2).getMemno()+":"+dbMemberList.get(2).getResult());*/
+			for(int z=0;z<dbMemberList.size();z++){
+				System.out.println(dbMemberList.get(z).getMemEmail()+":"+dbMemberList.get(z).getResult());
+			}
+			System.out.println("사람 수:"+dbMemberList.size());
 			ArrayList<Integer> booknolist = new ArrayList<Integer>();
 			ArrayList<String> naverlist = ndm.NaverFindDate();
 			ArrayList<String> daumlist = ndm.NaverFindDate();
-			for(int i=0;i<topN;i++)
+			int bookcnt=0;
+			for(int i=0;i<dbMemberList.size();i++)
 			{
 				String email = dbMemberList.get(i).getMemEmail();
 				sql = "SELECT * FROM isread "
@@ -310,6 +366,7 @@ public class BookMemberDAO {
 				ps.setString(1, email);
 				rs = ps.executeQuery();
 				dao = new BookDAO(); 
+				
 				while(rs.next())
 				{
 					/*sql = "SELECT * FROM bookinfo "
@@ -328,16 +385,17 @@ public class BookMemberDAO {
 					if(k>=booklist.size())
 					{
 						BookVO tempVO = dao.BookDetailData(rs.getInt(2));
-						ArrayList<String> tmplist = new ArrayList<String>();
+						/*ArrayList<String> tmplist = new ArrayList<String>();*/
 						/*tmplist.add("수학");
 						tmplist.add("가마니");
 						tmplist.add("비즈니스");*/
-						for(String temp:tmplist)
+						
+						for(String temp:naverlist)
 						{
 							String[] temparray= temp.split(" ");							
-							for(String key:naverlist)
+							for(String key:temparray)
 							{
-								System.out.println("키값:"+key);
+								//System.out.println("키값:"+key);
 								if(tempVO.getTitle().contains(key))
 								{
 									tempVO.setCommentpoint(tempVO.getCommentpoint()+0.05);
@@ -353,7 +411,7 @@ public class BookMemberDAO {
 							String[] temparray= temp.split(" ");
 							for(String key:temparray)
 							{
-								System.out.println("키값:"+key);
+								//System.out.println("키값:"+key);
 								if(tempVO.getTitle().contains(key))
 								{
 									tempVO.setCommentpoint(tempVO.getCommentpoint()+0.05);
@@ -364,12 +422,19 @@ public class BookMemberDAO {
 								}
 							}
 						}
+						tempVO.setCommentpoint(tempVO.getCommentpoint()+dbMemberList.get(i).getResult());
 						System.out.println(k+"번째 코맨트:"+tempVO.getCommentpoint());
 						booklist.add(tempVO);
+						bookcnt++;
+					}
+					if(bookcnt>topN)
+					{
+						break;
 					}
 				}
 				
 				Collections.sort(booklist);
+				
 			}
 			
 			

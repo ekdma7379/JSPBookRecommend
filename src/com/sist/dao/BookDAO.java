@@ -72,7 +72,7 @@ public class BookDAO {
 			JSONObject obj;
 
 			// naverAPI에서 책 검색목록 JSON 가져오기
-			String text = URLEncoder.encode("러", "UTF-8");
+			String text = URLEncoder.encode("건강", "UTF-8");
 
 			String apiURL = "https://openapi.naver.com/v1/search/book.json?query=" + text + "&display=100"; // json
 																											// 결과
